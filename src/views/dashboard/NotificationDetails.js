@@ -458,7 +458,7 @@ const NotificationDetails = ({ notification, onBack }) => {
                         wordWrap: "break-word"
                       }}
                     >
-                      {item.receivedQty}
+                      {item.requestedQty}
                     </td>
                     <td
                       className="px-2 py-1 text-gray-700 text-sm align-top"

@@ -740,10 +740,8 @@ const ChallanModal = ({ visible, onClose, data }) => {
       <tr key={item._id || index} className="product-row">
         <td className="product-cell">{item.product?.productTitle || 'N/A'}</td>
         <td className="quantity-cell">
-          {item.receivedQuantity !== undefined && item.receivedQuantity !== null 
-            ? `${item.receivedQuantity} Pcs` 
-            : `${item.approvedQuantity || item.quantity || 0} Pcs`}
-        </td>
+          {item.receivedQuantity || 0} Pcs
+          </td>
         <td className="serial-cell">
           {item.approvedSerials?.length > 0 
             ? item.approvedSerials.join(', ')
