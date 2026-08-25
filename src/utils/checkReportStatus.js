@@ -29,7 +29,8 @@ export const checkReportSubmissionStatus = async () => {
       center => center.centerName === userCenterName
     )
     
-    const hasMissed = userCenterData && userCenterData.submissionStatus === 'missed'
+    const isApproved = userCenterData && userCenterData.submissionStatus === 'approved'
+    const hasMissed = !isApproved
     localStorage.setItem('hasMissedReportSubmission', hasMissed ? 'true' : 'false')
     
     console.log(`Report submission status for ${userCenterName}:`, hasMissed ? 'MISSED - Restricting menu items' : 'SUBMITTED - Full access granted')

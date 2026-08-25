@@ -527,7 +527,11 @@ const ReportSubmissionList = () => {
                     <CTableDataCell>{customer.remark || ''}</CTableDataCell>
                     <CTableDataCell>{formatDateTime(customer.createdAt || 'N/A')}</CTableDataCell>
                     <CTableDataCell>{customer.createdBy?.email || 'N/A'}</CTableDataCell>
-                    <CTableDataCell>{customer.approvedRemark || ''}</CTableDataCell>
+                    <CTableDataCell>
+                      {customer.status === 'Approved' || customer.status === 'Duplicate'
+                        ? (customer.approvedRemark || customer.status)
+                        : <span className="badge bg-warning text-dark">Awaited</span>}
+                    </CTableDataCell>
                     {(userRole === 'admin' || userRole === 'superadmin')  &&  <CTableDataCell>
                     <div className="dropdown-container" ref={el => dropdownRefs.current[customer._id] = el}>
                         <CButton 
