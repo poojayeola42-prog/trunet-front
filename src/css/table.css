@@ -13,7 +13,8 @@
 
   .responsive-table-wrapper {
     max-height: 500px;
-    overflow-y: auto;
+    overflow-x: auto;
+    overflow-y: visible;
   }
   
   .responsive-table thead th {
@@ -147,11 +148,11 @@ background-color: #1e4a8a;
 position: relative;
 display: inline-block;
 min-width: fit-content;
-
+z-index: 1050;
 }
 
 .dropdown-menu {
-position: absolute;
+position: absolute !important;
 top: 100%;
 right: 0;
 z-index: 1000;

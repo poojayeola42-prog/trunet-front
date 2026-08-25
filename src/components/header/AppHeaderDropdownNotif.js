@@ -100,7 +100,7 @@ const AppHeaderDropdownNotif = () => {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const res = await axiosInstance.get('/stockrequest/notification');
+        const res = await axiosInstance.get('/stockrequest/notifications');
         if (res.data.success) {
           setNotifications(res.data.data || []);
           setUnreadCount(res.data.data?.length || 0);

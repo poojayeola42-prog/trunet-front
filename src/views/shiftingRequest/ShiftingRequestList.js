@@ -44,7 +44,11 @@ const ShiftinRequestList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1); 
   const loggedInUser = JSON.parse(localStorage.getItem('user')) || {};
-  const userCenter = loggedInUser.center ? loggedInUser.center._id : null;
+  const userCenter = loggedInUser.center?._id ||
+  loggedInUser.center ||
+  loggedInUser.centerId ||
+  loggedInUser.centerID ||
+  null;
 
   const { hasAnyPermission } = usePermission(); 
 
@@ -362,16 +366,29 @@ const ShiftinRequestList = () => {
   }
 
   const canEditDelete = (building) => {
-    return userCenter && building.fromCenter && building.fromCenter._id === userCenter;
-  };
+  const fromCenterId =
+    building.fromCenter?._id ||
+    building.fromCenter ||
+    null;
 
-  const canApproveReject = (building) => {
-    return userCenter && building.toCenter && building.toCenter._id === userCenter;
-  };
+  return userCenter && String(fromCenterId) === String(userCenter);
+};
 
-  const shouldShowActions = (building) => {
-    return building.status === 'Pending' && (canEditDelete(building) || canApproveReject(building));
-  };
+const canApproveReject = (building) => {
+  const toCenterId =
+    building.toCenter?._id ||
+    building.toCenter ||
+    null;
+
+  return userCenter && String(toCenterId) === String(userCenter);
+};
+
+const shouldShowActions = (building) => {
+  return (
+    building.status === 'Pending' &&
+    (canEditDelete(building) || canApproveReject(building))
+  );
+};
 
   const handleDelete = async (itemId) => {
     const result = await confirmDelete();
@@ -512,13 +529,13 @@ const ShiftinRequestList = () => {
                               size="sm"
                               className='option-button btn-sm'
                               onClick={() => toggleDropdown(building._id)}
-                              disabled={!shouldShowActions(building)}
+                              disabled={false}
                             >
                               <CIcon icon={cilSettings} /> Options
                             </CButton>
-                            {dropdownOpen[building._id] && shouldShowActions(building) && (
+                            {dropdownOpen[building._id] && (
                               <div className="dropdown-menu show">
-                                {canEditDelete(building) && hasAnyPermission('Shifting', ['manage_shifting_all_center','manage_shifting_own_center']) && (
+                                {canEditDelete(building) && (
                                   <>
                                     <button 
                                       className="dropdown-item"
@@ -534,7 +551,7 @@ const ShiftinRequestList = () => {
                                     </button>
                                   </>
                                 )}
-                                {canApproveReject(building) && hasAnyPermission('Shifting', ['accept_shifting_all_center','accept_shifting_own_center']) &&(
+                                {canApproveReject(building) && (
                                   <>
                                     <button
                                       className="dropdown-item"

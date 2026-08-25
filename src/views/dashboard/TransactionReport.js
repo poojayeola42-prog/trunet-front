@@ -33,7 +33,7 @@ const TransactionReport = ({ onNotificationClick }) => {
 
     const fetchNotifications = async () => {
       try {
-        const res = await axiosInstance.get('/stockrequest/notification');
+        const res = await axiosInstance.get('/stockrequest/notifications');
         if (res.data.success) {
           setNotifications(res.data.data || []);
         } else {
@@ -151,8 +151,8 @@ const TransactionReport = ({ onNotificationClick }) => {
                   </thead>
                   <tbody>
                     {transactions.length > 0 ? (
-                      transactions.map((t) => (
-                        <tr key={t._id}>
+                      transactions.map((t, index) => (
+                         <tr key={t._id || index}>
                           <td style={tdStyle}>{t.Date}</td>
                           <td style={tdStyle}>{t.Type}</td>
                           <td style={tdStyle}>{t.Center}</td>

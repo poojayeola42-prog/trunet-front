@@ -3674,7 +3674,7 @@ const handleCompleteIndent = async () => {
   try {
     console.log('Completing indent with productReceipts:', productReceipts);
     
-    if (userCenterType === 'center') {
+    if (userCenterType === 'center' && isCenter) {
       const missingReceipts = productReceipts.filter(item => 
         item.receivedQuantity === undefined || 
         item.receivedQuantity === null || 
@@ -3812,7 +3812,7 @@ const handleMarkIncomplete = async (remark) => {
   try {
     console.log('Marking as incomplete with productReceipts:', productReceipts);
     
-    if (userCenterType === 'center') {
+    if (userCenterType === 'center' && isCenter) {
       const missingReceipts = productReceipts.filter(item => 
         item.receivedQuantity === undefined || 
         item.receivedQuantity === null || 
