@@ -897,6 +897,12 @@ import {
 } from '@coreui/react';
 import Select from 'react-select';
 
+const getLastDayOfMonth = () => {
+  const now = new Date();
+  const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+  return lastDay.toISOString().split('T')[0];
+};
+
 const AddReportSubmission = () => {
   const [productSearchTerm, setProductSearchTerm] = useState('');
   const [selectedRows, setSelectedRows] = useState({});
@@ -907,7 +913,7 @@ const AddReportSubmission = () => {
   const { id } = useParams();
 
   const [formData, setFormData] = useState({
-    date: new Date().toISOString().split('T')[0],
+    date: getLastDayOfMonth(),
     remark: '',
   });
 
@@ -944,7 +950,7 @@ const AddReportSubmission = () => {
       const data = res.data.data;
       
       setFormData({
-        date: data.date ? new Date(data.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+        date: data.date ? new Date(data.date).toISOString().split('T')[0] : getLastDayOfMonth(),
         remark: data.remark || '',
       });      
       
