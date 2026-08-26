@@ -593,22 +593,23 @@ const TransferSummary = () => {
     fetchProducts();
   }, []);
 
-  const handleProductClick = (productName) => {
-  const product = products.find(
-    (p) =>
-      p.productTitle?.trim().toLowerCase() ===
-      productName?.trim().toLowerCase()
-  );
+  const handleProductClick = (item) => {
+  console.log('Transfer Summary product clicked:', {
+    productId: item.productId,
+    productName: item.product,
+    fromCenterId: item.fromCenterId,
+    toCenterId: item.toCenterId
+  });
 
-  if (!product?._id) {
-    console.error('Product ID not found for:', productName);
+  if (!item.productId) {
+    console.error('Product ID missing from transfer summary:', item);
     return;
   }
 
   navigate('/stock-request', {
     state: {
-      productFilter: product._id,
-      productName: product.productTitle,
+      productFilter: item.productId,
+      productName: item.product,
       fromTransferReport: true
     }
   });
@@ -1063,7 +1064,7 @@ const TransferSummary = () => {
                             color: '#007bff',
                             textDecoration: 'underline'
                           }}
-                          onClick={() => handleProductClick(item.product)}
+                          onClick={() => handleProductClick(item)}
                           title="Click to view stock request details"
                           >
                             {item.product}
