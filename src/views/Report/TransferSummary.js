@@ -596,13 +596,11 @@ const TransferSummary = () => {
   const handleProductClick = (item) => {
   console.log('Transfer Summary product clicked:', {
     productId: item.productId,
-    productName: item.product,
-    fromCenterId: item.fromCenterId,
-    toCenterId: item.toCenterId
+    productName: item.product
   });
 
   if (!item.productId) {
-    console.error('Product ID missing from transfer summary:', item);
+    console.error('Product ID missing:', item);
     return;
   }
 

@@ -2210,8 +2210,8 @@ const TransferDetail = () => {
   };
 
   // Handler for clicking on product to navigate to Stock Request List
-  const handleProductClick = (productId, productName, centerId, centerName) => {
-    console.log('🔍 Clicking product:', { productId, productName, centerId, centerName });
+  const handleProductClick = (productId, productName) => {
+    console.log('🔍 Clicking product:', { productId, productName });
     
     if (!productId) {
       console.warn('No product ID provided for navigation');
@@ -2902,9 +2902,7 @@ const TransferDetail = () => {
                                   console.log('🖱️ Product clicked:', { productId, productName, centerId, centerName });
                                   handleProductClick(
                                     productId, 
-                                    productName,
-                                    centerId,
-                                    centerName
+                                    productName
                                   );
                                 }}
                                 title="Click to view all stock requests for this product"
@@ -2928,9 +2926,7 @@ const TransferDetail = () => {
                                   console.log('🖱️ Quantity clicked:', { productId, productName, centerId, centerName, quantity: item.productDetail.quantity });
                                   handleProductClick(
                                     productId, 
-                                    productName,
-                                    centerId,
-                                    centerName
+                                    productName
                                   );
                                 }}
                                 title="Click to view all stock requests for this product"

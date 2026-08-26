@@ -1712,11 +1712,12 @@ const StockRequest = () => {
       // Handle status filter
       if (!searchParams.fromTransferReport && !searchParams.status) {
         const statuses = statusFilters[tab] || [];
+        
         statuses.forEach(status => {
           params.append('status', status);
         });
       } else if (searchParams.status) {
-        params.append('status', searchParams.status); 
+        params.append('status', searchParams.status);
       }
       
       // Handle other filters
@@ -1826,10 +1827,12 @@ const StockRequest = () => {
       const productFilter = location.state.productFilter;
       const productName = location.state.productName || 'Product';
 
-      console.log('📦 Received product filter from navigation:', {
+      console.log('📦 Transfer Report product filter:', {
         productFilter,
         productName
       });
+
+      setIsNavigatedFromReport(true);
 
       // Set active search
       setActiveSearch(prev => ({
@@ -1838,26 +1841,22 @@ const StockRequest = () => {
         center: ''
       }));
 
-      setIsNavigatedFromReport(true);
-
       // Fetch data with product filter after a small delay
-      setTimeout(() => {
-        const searchParams = {
-          product: productFilter,
-          center: '',
-          keyword: '',
-          outlet: '',
-          status: '',
-          startDate: '',
-          endDate: '',
-          indentStartDate: '',
-          indentEndDate: '',
-          fromTransferReport: true
-        };
-        fetchData(searchParams, activeTab, 1);
-      }, 200);
+      const searchParams = {
+        product: productFilter,
+        center: '',
+        outlet: '',
+        keyword: '',
+        status: '',
+        startDate: '',
+        endDate: '',
+        indentStartDate: '',
+        indentEndDate: '',
+        fromTransferReport: true
+      };
+      fetchData(searchParams, activeTab, 1);
     }
-  }, [location.state, fetchData, activeTab]);
+}, [location.state, fetchData, activeTab]);
 
   // Initial data fetch
   useEffect(() => {
