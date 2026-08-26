@@ -462,6 +462,7 @@
 import '../../css/table.css';
 import '../../css/form.css';
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   CTable,
   CTableHead,
@@ -492,6 +493,8 @@ import { formatDisplayDate } from 'src/utils/FormatDateTime';
 import SearchIndentSummary from './SearchIndentSummary';
 
 const TransferSummary = () => {
+  const navigate = useNavigate();
+
   const [data, setData] = useState([]);
   const [centers, setCenters] = useState([]);
   const [products, setProducts] = useState([]);
@@ -589,6 +592,27 @@ const TransferSummary = () => {
     fetchCenters();
     fetchProducts();
   }, []);
+
+  const handleProductClick = (productName) => {
+  const product = products.find(
+    (p) =>
+      p.productTitle?.trim().toLowerCase() ===
+      productName?.trim().toLowerCase()
+  );
+
+  if (!product?._id) {
+    console.error('Product ID not found for:', productName);
+    return;
+  }
+
+  navigate('/stock-request', {
+    state: {
+      productFilter: product._id,
+      productName: product.productTitle,
+      fromTransferReport: true
+    }
+  });
+};
 
   const handlePageChange = (page) => {
     if (page < 1 || page > totalPages) return;
@@ -1032,7 +1056,22 @@ const TransferSummary = () => {
                       <CTableRow key={index}>
                         <CTableDataCell>{item.fromCenter || ''}</CTableDataCell>
                         <CTableDataCell>{item.toCenter || ''}</CTableDataCell>
-                        <CTableDataCell>{item.product || ' '}</CTableDataCell>
+                        <CTableDataCell>{item.product ? (
+                          <span
+                          style={{
+                            cursor: 'pointer',
+                            color: '#007bff',
+                            textDecoration: 'underline'
+                          }}
+                          onClick={() => handleProductClick(item.product)}
+                          title="Click to view stock request details"
+                          >
+                            {item.product}
+                            </span>
+                            ) : (
+                              'No Product'
+                            )}
+                         </CTableDataCell>
                         <CTableDataCell>{item.totalReceivedQty || 0}</CTableDataCell>
                       </CTableRow>
                     ))}

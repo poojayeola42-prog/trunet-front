@@ -1710,13 +1710,13 @@ const StockRequest = () => {
       const params = new URLSearchParams();
       
       // Handle status filter
-      if (!searchParams.status) {
+      if (!searchParams.fromTransferReport && !searchParams.status) {
         const statuses = statusFilters[tab] || [];
         statuses.forEach(status => {
           params.append('status', status);
         });
-      } else {
-        params.append('status', searchParams.status);
+      } else if (searchParams.status) {
+        params.append('status', searchParams.status); 
       }
       
       // Handle other filters
@@ -1825,19 +1825,17 @@ const StockRequest = () => {
     if (location.state?.productFilter) {
       const productFilter = location.state.productFilter;
       const productName = location.state.productName || 'Product';
-      const centerFilter = location.state.centerFilter || '';
 
       console.log('📦 Received product filter from navigation:', {
         productFilter,
-        productName,
-        centerFilter
+        productName
       });
 
       // Set active search
       setActiveSearch(prev => ({
         ...prev,
         product: productFilter,
-        center: centerFilter || prev.center
+        center: ''
       }));
 
       setIsNavigatedFromReport(true);
@@ -1846,14 +1844,15 @@ const StockRequest = () => {
       setTimeout(() => {
         const searchParams = {
           product: productFilter,
-          center: centerFilter || '',
+          center: '',
           keyword: '',
           outlet: '',
           status: '',
           startDate: '',
           endDate: '',
           indentStartDate: '',
-          indentEndDate: ''
+          indentEndDate: '',
+          fromTransferReport: true
         };
         fetchData(searchParams, activeTab, 1);
       }, 200);

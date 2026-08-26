@@ -2223,8 +2223,7 @@ const TransferDetail = () => {
       state: { 
         productFilter: productId,
         productName: productName || 'Product',
-        centerFilter: centerId || '',
-        centerName: centerName || 'Center'
+        fromTransferReport: true
       } 
     });
   };
