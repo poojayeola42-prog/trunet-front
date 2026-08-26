@@ -1,6 +1,6 @@
 import '../../css/table.css';
 import '../../css/form.css';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import {
   CTable,
   CTableHead,
@@ -25,6 +25,7 @@ import axiosInstance from 'src/axiosInstance';
 import { formatDate, formatDateTime } from 'src/utils/FormatDateTime';
 import ReportSearchmodel from './ReportSearchModel';
 import Swal from 'sweetalert2';
+import { AuthContext } from 'src/context/AuthContext';
 
 const ReportSubmissionList = () => {
   const [data, setData] = useState([]);
@@ -45,6 +46,16 @@ const ReportSubmissionList = () => {
   
   const user = JSON.parse(localStorage.getItem('user')) || {};
   const userRole = (user?.role?.roleTitle || '').toLowerCase();
+  const { refreshReportStatus } = useContext(AuthContext);
+ 
+  useEffect(() => {
+    // Self-heal: whenever this page loads, re-check the real submission
+    // status so a stale "missed" flag from an earlier month/session doesn't
+    // keep restricting the sidebar after the report has actually been submitted.
+    if (refreshReportStatus) {
+      refreshReportStatus();
+    }
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
