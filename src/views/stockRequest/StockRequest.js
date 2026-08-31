@@ -1820,43 +1820,47 @@ const StockRequest = () => {
   }, []);
 
   // Handle navigation state for product filter
+  // Handle navigation state for product filter
   useEffect(() => {
     console.log('📍 Location state:', location.state);
     
     if (location.state?.productFilter) {
       const productFilter = location.state.productFilter;
       const productName = location.state.productName || 'Product';
-
-      console.log('📦 Transfer Report product filter:', {
+      console.log("📦 Transfer Report product filter:", {
         productFilter,
-        productName
+        productName,
       });
-
+      
       setIsNavigatedFromReport(true);
-
+      
       // Set active search
       setActiveSearch(prev => ({
         ...prev,
         product: productFilter,
-        center: ''
+       center: ''
       }));
 
-      // Fetch data with product filter after a small delay
-      const searchParams = {
-        product: productFilter,
-        center: '',
-        outlet: '',
-        keyword: '',
-        status: '',
-        startDate: '',
-        endDate: '',
-        indentStartDate: '',
-        indentEndDate: '',
-        fromTransferReport: true
-      };
+    // Fetch data with product filter after a small delay
+    const searchParams = {
+      product: productFilter,
+      center: '',
+      outlet: '',
+      keyword: '',
+      status: '',
+      startDate: '',
+      endDate: '',
+      indentStartDate: '',
+      indentEndDate: '',
+      fromTransferReport: true
+    };
+
+    // Use setTimeout to ensure state updates are applied
+    setTimeout(() => {
       fetchData(searchParams, activeTab, 1);
-    }
-}, [location.state, fetchData, activeTab]);
+    }, 100);
+  }
+}, [location.state, activeTab, fetchData]);
 
   // Initial data fetch
   useEffect(() => {

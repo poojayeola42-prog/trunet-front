@@ -1649,7 +1649,12 @@ const UsageSummary = () => {
                     {filteredData.map((item, idx) => (
                       <CTableRow key={idx}>
                         <CTableDataCell>{item.Center || 'N/A'}</CTableDataCell>
-                        <CTableDataCell>{item.Product || 'N/A'}</CTableDataCell>
+                        <CTableDataCell
+                        onClick={() => handleProductQuantityClick(item)}
+                        style={{cursor: 'pointer', color: '#337ab7'}}
+                        >
+                          {item.Product || 'N/A'}
+                          </CTableDataCell>
                         <CTableDataCell>
                           <button 
                             className="btn btn-link p-0 text-decoration-none"
