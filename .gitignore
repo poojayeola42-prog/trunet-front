@@ -8,8 +8,7 @@ yarn.lock
 # testing
 /coverage
 
-# production
-/build
+
 
 # misc
 .eslintcache
@@ -33,10 +32,10 @@ yarn-error.log*
 *.swo
 *.swp
 *.vi
-*.zip
+
 *~
 
 # Folders to ignore
 .demos
 .sh
-.zip
+
