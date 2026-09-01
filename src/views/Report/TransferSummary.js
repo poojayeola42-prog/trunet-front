@@ -608,7 +608,9 @@ const TransferSummary = () => {
     state: {
       productFilter: item.productId,
       productName: item.product,
-      fromTransferReport: true
+      fromTransferReport: true,
+      isProductDetailView: true, 
+      hideClearFilter: true  
     }
   });
 };

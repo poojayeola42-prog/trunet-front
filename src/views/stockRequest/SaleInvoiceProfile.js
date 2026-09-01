@@ -2971,7 +2971,7 @@ const handlePrintIndent = () => {
               </>
             )}
 
-            {(data.status === 'Shipped' || data.status === 'Completed') && (
+            {/* {(data.status === 'Shipped' || data.status === 'Completed') && (
               <>
                 {(isCenter) && (
                   <CButton className="btn-action btn-submitted me-2" 
@@ -2981,7 +2981,7 @@ const handlePrintIndent = () => {
                   </CButton>
                 )}
               </>
-            )}
+            )} */}
 
             {data.status === 'Shipped' && userCenterType === 'outlet' &&  (userRole === 'admin' || userRole === 'superadmin') && isWarehouse &&(
               <>

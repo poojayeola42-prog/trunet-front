@@ -1649,50 +1649,67 @@ const IndentUsageSummary = () => {
   const navigate = useNavigate();
   
   const fetchData = async (searchParams = {}, page = 1) => {
-    try {
-      setLoading(true);
-      setError(null);
-      const params = new URLSearchParams();
-      
-      if (searchParams.center) {
-        params.append('centerId', searchParams.center);
-      }
-      if (searchParams.product) {
-        params.append('productId', searchParams.product);
-      }
-      if (searchParams.month) {
-        const [year, month] = searchParams.month.split('-');
-        params.append('month', month);
-        params.append('year', year);
-      }
-      
-      params.append('page', page);
-      
-      const url = params.toString()
-        ? `/reports/indent-usage-summary?${params.toString()}`
-        : '/reports/indent-usage-summary';
+  try {
+    setLoading(true);
+    setError(null);
 
-      console.log('Fetching Usage Summary URL:', url);
-      const response = await axiosInstance.get(url);
+    const params = new URLSearchParams();
+      
+    if (searchParams.center) {
+      params.append('centerId', searchParams.center);
+    }
 
-      if (response.data.success) {
-        setData(response.data.data || []);
-        setSummary(response.data.summary || null);
-        setFilters(response.data.filters || null);
-        setCurrentPage(response.data.pagination?.currentPage || 1);
-        setTotalPages(response.data.pagination?.totalPages || 1);
-      } else {
-        const errorMessage = response.data.message || 'API returned unsuccessful response';
+    if (searchParams.product) {
+      params.append('productId', searchParams.product);
+    }
+
+    if (searchParams.reseller) {
+      params.append('resellerId', searchParams.reseller);
+    }
+
+    if (searchParams.startDate) {
+      params.append('startDate', searchParams.startDate);
+    }
+
+    if (searchParams.endDate) {
+      params.append('endDate', searchParams.endDate);
+    }
+
+    if (searchParams.month) {
+      const [year, month] = searchParams.month.split('-');
+      params.append('month', month);
+      params.append('year', year);
+    }
+    params.append('page', page);
+
+    const url = params.toString()
+      ? `/reports/indent-usage-summary?${params.toString()}`
+      : '/reports/indent-usage-summary';
+
+    console.log('Fetching Usage Summary URL:', url);
+
+    const response = await axiosInstance.get(url);
+
+    if (response.data.success) {
+      setData(response.data.data || []);
+      setSummary(response.data.summary || null);
+      setFilters(response.data.filters || null);
+      setCurrentPage(response.data.pagination?.currentPage || 1);
+      setTotalPages(response.data.pagination?.totalPages || 1);
+    } else {
+      const errorMessage =
+        response.data.message || 'API returned unsuccessful response';
+
       setError(errorMessage);
       console.error('Backend error:', response.data);
-      }
-    } catch (err) {
-      setError(err.message);
-      console.error('Error fetching data:', err);
-    } finally {
-      setLoading(false);
     }
-  };
+  } catch (err) {
+    setError(err.message);
+    console.error('Error fetching data:', err);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const fetchCenters = async () => {
     try {

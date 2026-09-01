@@ -1820,11 +1820,10 @@ const StockRequest = () => {
   }, []);
 
   // Handle navigation state for product filter
-  // Handle navigation state for product filter
   useEffect(() => {
     console.log('📍 Location state:', location.state);
-    
-    if (location.state?.productFilter) {
+
+    if (location.state?.productFilter && !isNavigatedFromReport) {
       const productFilter = location.state.productFilter;
       const productName = location.state.productName || 'Product';
       console.log("📦 Transfer Report product filter:", {
@@ -1834,33 +1833,36 @@ const StockRequest = () => {
       
       setIsNavigatedFromReport(true);
       
-      // Set active search
-      setActiveSearch(prev => ({
-        ...prev,
+      // Fetch data with product filter after a small delay
+      const searchParams = {
         product: productFilter,
-       center: ''
-      }));
+        center: '',
+        outlet: '',
+        keyword: '',
+        status: '',
+        startDate: '',
+        endDate: '',
+        indentStartDate: '',
+        indentEndDate: '',
+        fromTransferReport: true};
 
-    // Fetch data with product filter after a small delay
-    const searchParams = {
-      product: productFilter,
-      center: '',
-      outlet: '',
-      keyword: '',
-      status: '',
-      startDate: '',
-      endDate: '',
-      indentStartDate: '',
-      indentEndDate: '',
-      fromTransferReport: true
-    };
+        setActiveSearch(prev => ({
+          ...prev,
+          product: productFilter,
+          center: ''
+        }));
+        
+        // Fetch immediately - no setTimeout needed
+        fetchData(searchParams, activeTab, 1);
+      }
+    }, [location.state, activeTab, fetchData, isNavigatedFromReport]);
 
-    // Use setTimeout to ensure state updates are applied
-    setTimeout(() => {
-      fetchData(searchParams, activeTab, 1);
-    }, 100);
-  }
-}, [location.state, activeTab, fetchData]);
+    useEffect(() => {
+      return () => {
+        // Clear location state when component unmounts
+        navigate(location.pathname, { replace: true, state: {} });
+      };
+    }, [navigate, location.pathname]);
 
   // Initial data fetch
   useEffect(() => {
@@ -1947,21 +1949,24 @@ const StockRequest = () => {
   };
 
   const handleResetSearch = () => {
-    setActiveSearch({
-      keyword: '',
-      center: '',
-      outlet: '',
-      status: '',
-      startDate: '',
-      endDate: '',
-      indentStartDate: '',
-      indentEndDate: '',
-      product: ''
-    });
-    setSearchTerm('');
-    setIsNavigatedFromReport(false);
-    fetchData({}, activeTab, 1);
+  const emptySearch = {
+    keyword: '',
+    center: '',
+    outlet: '',
+    status: '',
+    startDate: '',
+    endDate: '',
+    indentStartDate: '',
+    indentEndDate: '',
+    product: ''
   };
+  setActiveSearch(emptySearch);
+  setSearchTerm('');
+  setIsNavigatedFromReport(false);
+  // Clear location state to prevent re-triggering the effect
+  navigate(location.pathname, { replace: true, state: {} });
+  fetchData(emptySearch, activeTab, 1);
+};
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -2441,8 +2446,21 @@ const StockRequest = () => {
                   Product: {getProductName(activeSearch.product)}
                   <button
                     onClick={() => {
-                      setActiveSearch(prev => ({ ...prev, product: '' }));
-                      fetchData({ ...activeSearch, product: '' }, activeTab, 1);
+                      const newSearchParams = { 
+                        keyword: '',
+                        center: '',
+                        outlet: '',
+                        status: '',
+                        startDate: '',
+                        endDate: '',
+                        indentStartDate: '',
+                        indentEndDate: '',
+                        product: ''
+                      };
+                      setActiveSearch(newSearchParams);
+                      setIsNavigatedFromReport(false);
+                      navigate(location.pathname, { replace: true, state: {} });
+                      fetchData(newSearchParams, activeTab, 1);
                     }}
                     style={{
                       border: 'none',
