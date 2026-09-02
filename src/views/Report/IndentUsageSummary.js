@@ -1593,9 +1593,927 @@
 
 
 
+// import '../../css/table.css';
+// import '../../css/form.css';
+// import React, { useState, useEffect } from 'react';
+// import {
+//   CTable,
+//   CTableHead,
+//   CTableRow,
+//   CTableHeaderCell,
+//   CTableBody,
+//   CTableDataCell,
+//   CCard,
+//   CCardBody,
+//   CCardHeader,
+//   CButton,
+//   CSpinner,
+//   CFormLabel,
+//   CFormInput,
+//   CModal,
+//   CModalHeader,
+//   CModalTitle,
+//   CModalBody,
+//   CModalFooter
+// } from '@coreui/react';
+// import CIcon from '@coreui/icons-react';
+// import { cilArrowTop, cilArrowBottom, cilSearch, cilZoomOut } from '@coreui/icons';
+// import { CFormLabel as CFormLabelPro } from '@coreui/react-pro';
+// import axiosInstance from 'src/axiosInstance';
+// import Pagination from 'src/utils/Pagination';
+// import { showError, showSuccess } from 'src/utils/sweetAlerts';
+// import IndentUsageSummarySearch from './IndentUsageSummarySearch';
+// import { useNavigate, useLocation } from 'react-router-dom';
+
+// const IndentUsageSummary = () => {
+//   const [data, setData] = useState([]);
+//   const [summary, setSummary] = useState(null);
+//   const [filters, setFilters] = useState(null);
+//   const [centers, setCenters] = useState([]);
+//   const [products, setProducts] = useState([]);
+//   const [loading, setLoading] = useState(true);
+//   const [exportLoading, setExportLoading] = useState(false);
+//   const [error, setError] = useState(null);
+//   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
+//   const [searchTerm, setSearchTerm] = useState('');
+//   const [searchModalVisible, setSearchModalVisible] = useState(false);
+//   const [exportModalVisible, setExportModalVisible] = useState(false);
+//   const [exportMonth, setExportMonth] = useState('');
+//   const [activeSearch, setActiveSearch] = useState({ 
+//     center: '', 
+//     product: '', 
+//     month: '',
+//   });
+//   const [currentPage, setCurrentPage] = useState(1);
+//   const [totalPages, setTotalPages] = useState(1);
+//   const location = useLocation();
+//   const navigate = useNavigate();
+
+//   useEffect(() => {
+//   if (location.state?.productFilter) {
+//     const productFilter = location.state.productFilter;
+//     const centerFilter = location.state.centerFilter || '';
+    
+//     console.log('📦 Received product filter from navigation:', {
+//       productFilter,
+//       centerFilter
+//     });
+    
+//     // Set active search with product and center filters
+//     const searchParams = {
+//       center: centerFilter,
+//       product: productFilter,
+//       month: activeSearch.month || '',
+//     };
+    
+//     setActiveSearch(searchParams);
+//     fetchData(searchParams, 1);
+//   }
+// }, [location.state]);
+  
+//   const fetchData = async (searchParams = {}, page = 1) => {
+//   try {
+//     setLoading(true);
+//     setError(null);
+
+//     const params = new URLSearchParams();
+      
+//     if (searchParams.center) {
+//       params.append('centerId', searchParams.center);
+//     }
+
+//     if (searchParams.product) {
+//       params.append('productId', searchParams.product);
+//     }
+
+//     if (searchParams.reseller) {
+//       params.append('resellerId', searchParams.reseller);
+//     }
+
+//     if (searchParams.startDate) {
+//       params.append('startDate', searchParams.startDate);
+//     }
+
+//     if (searchParams.endDate) {
+//       params.append('endDate', searchParams.endDate);
+//     }
+
+//     if (searchParams.month) {
+//       const [year, month] = searchParams.month.split('-');
+//       params.append('month', month);
+//       params.append('year', year);
+//     }
+//     params.append('page', page);
+
+//     const url = params.toString()
+//       ? `/reports/indent-usage-summary?${params.toString()}`
+//       : '/reports/indent-usage-summary';
+
+//     console.log('Fetching Usage Summary URL:', url);
+
+//     const response = await axiosInstance.get(url);
+
+//     if (response.data.success) {
+//       setData(response.data.data || []);
+//       setSummary(response.data.summary || null);
+//       setFilters(response.data.filters || null);
+//       setCurrentPage(response.data.pagination?.currentPage || 1);
+//       setTotalPages(response.data.pagination?.totalPages || 1);
+//     } else {
+//       const errorMessage =
+//         response.data.message || 'API returned unsuccessful response';
+
+//       setError(errorMessage);
+//       console.error('Backend error:', response.data);
+//     }
+//   } catch (err) {
+//     setError(err.message);
+//     console.error('Error fetching data:', err);
+//   } finally {
+//     setLoading(false);
+//   }
+// };
+
+//   const fetchCenters = async () => {
+//     try {
+//       const response = await axiosInstance.get('/centers');
+//       if (response.data.success) {
+//         setCenters(response.data.data);
+//       }
+//     } catch (error) {
+//       console.error('Error fetching centers:', error);
+//     }
+//   };
+
+//   const fetchProducts = async () => {
+//     try {
+//       const response = await axiosInstance.get('/products/all');
+//       if (response.data.success) {
+//         setProducts(response.data.data);
+//       }
+//     } catch (error) {
+//       console.error('Error fetching products:', error);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchData();
+//     fetchCenters();
+//     fetchProducts();
+//   }, []);
+
+//   const handlePageChange = (page) => {
+//     if (page < 1 || page > totalPages) return;
+//     fetchData(activeSearch, page);
+//   };
+
+//   const calculateTotals = () => {
+//     const totals = {
+//       opening: 0,
+//       purchase: 0,
+//       transferReceive: 0,
+//       return:0,
+//       usage: 0,
+//       transferGiven: 0,
+//       nc: 0,
+//       convert: 0,
+//       shifting: 0,
+//       buildingUsage: 0,
+//       buildingDamage: 0,
+//       other: 0,
+//       repair: 0,
+//       damage: 0,
+//       closing: 0
+//     };
+
+//     data.forEach(item => {
+//       totals.opening += parseFloat(item.opening || 0);
+//       totals.purchase += parseFloat(item.purchase || 0);
+//       totals.transferReceive += parseFloat(item.transferReceive || 0);
+//       totals.return += parseFloat(item.return || 0);
+//       totals.usage += parseFloat(item.usage || 0);
+//       totals.transferGiven += parseFloat(item.transferGiven || 0);
+//       totals.nc += parseFloat(item.nc || 0);
+//       totals.convert += parseFloat(item.convert || 0);
+//       totals.shifting += parseFloat(item.shifting || 0);
+//       totals.buildingUsage += parseFloat(item.buildingUsage || 0);
+//       totals.buildingDamage += parseFloat(item.buildingDamage || 0);
+//       totals.other += parseFloat(item.other || 0);
+//       totals.repair += parseFloat(item.repair || 0);
+//       totals.damage += parseFloat(item.damage || 0);
+//       totals.closing += parseFloat(item.closing || 0);
+//     });
+
+//     return totals;
+//   };
+
+//   const handleSort = (key) => {
+//     let direction = 'ascending';
+//     if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+//       direction = 'descending';
+//     }
+//     setSortConfig({ key, direction });
+
+//     const sortedData = [...data].sort((a, b) => {
+//       const aValue = a[key] || '';
+//       const bValue = b[key] || '';
+//       if (aValue < bValue) return direction === 'ascending' ? -1 : 1;
+//       if (aValue > bValue) return direction === 'ascending' ? 1 : -1;
+//       return 0;
+//     });
+
+//     setData(sortedData);
+//   };
+
+//   const getSortIcon = (key) =>
+//     sortConfig.key === key ? (
+//       sortConfig.direction === 'ascending'
+//         ? <CIcon icon={cilArrowTop} className="ms-1" />
+//         : <CIcon icon={cilArrowBottom} className="ms-1" />
+//     ) : null;
+
+//   const handleSearch = (searchData) => {
+//   const mergedSearchData = {
+//     ...activeSearch,
+//     ...searchData
+//   };
+//   setActiveSearch(mergedSearchData);
+//   // ✅ Clear location state when doing a new search
+//   navigate(location.pathname, { replace: true, state: {} });
+//   fetchData(mergedSearchData, 1);
+// };
+
+//   const handleResetSearch = () => {
+//   const emptySearch = { 
+//     center: '', 
+//     product: '', 
+//     month: '',
+//   };
+//   setActiveSearch(emptySearch);
+//   setSearchTerm('');
+//   // ✅ Clear location state to prevent re-triggering
+//   navigate(location.pathname, { replace: true, state: {} });
+//   fetchData(emptySearch, 1);
+// };
+
+//   const isSearchActive = () => {
+//     return activeSearch.center || 
+//            activeSearch.product || 
+//            activeSearch.month;
+//   };
+
+//   const openExportModal = () => {
+//     setExportMonth(activeSearch.month || '');
+//     setExportModalVisible(true);
+//   };
+
+//   const generateDetailExport = async () => {
+//     try {
+//       setExportLoading(true);
+    
+//       const params = new URLSearchParams();
+      
+//       if (activeSearch.center) {
+//         params.append('centerId', activeSearch.center);
+//       }
+//       if (activeSearch.product) {
+//         params.append('productId', activeSearch.product);
+//       }
+      
+//       // Use export modal month (overrides active search month)
+//       if (exportMonth) {
+//         const [year, month] = exportMonth.split('-');
+//         params.append('month', month);
+//         params.append('year', year);
+//       } else if (activeSearch.month) {
+//         const [year, month] = activeSearch.month.split('-');
+//         params.append('month', month);
+//         params.append('year', year);
+//       }
+      
+//       params.append('export', 'true');
+//       const apiUrl = params.toString()
+//         ? `/reports/indent-usage-summary?${params.toString()}`
+//         : '/reports/indent-usage-summary';
+      
+//       const response = await axiosInstance.get(apiUrl);
+      
+//       if (!response.data.success) {
+//         throw new Error('API returned unsuccessful response');
+//       }
+  
+//       const exportData = response.data.data || [];
+      
+//       if (!exportData || exportData.length === 0) {
+//         showError('No data available for export');
+//         return;
+//       }
+  
+//       const headers = [
+//         'Center Name',
+//         'Center Code',
+//         'Product Name',
+//         'Opening',
+//         'Purchase',
+//         'Transfer Receive',
+//         'Return',
+//         'Usage',
+//         'Transfer Given',
+//         'NC',
+//         'Convert',
+//         'Shifting',
+//         'Building new usage',
+//         'Building Damage',
+//         'Other',
+//         'Repair',
+//         'Damage',
+//         'Closing'
+//       ];
+  
+//       const csvData = exportData.map(item => [
+//         item.center?.name || '',
+//         item.center?.code || '',
+//         item.productName || '',
+//         item.opening || 0,
+//         item.purchase || 0,
+//         item.transferReceive || 0,
+//         item.return || 0,
+//         item.usage || 0,
+//         item.transferGiven || 0,
+//         item.nc || 0,
+//         item.convert || 0,
+//         item.shifting || 0,
+//         item.buildingUsage || 0,
+//         item.buildingDamage || 0,
+//         item.other || 0,
+//         item.repair || 0,
+//         item.damage || 0,
+//         item.closing || 0
+//       ]);
+  
+//       // Create filename with month if provided
+//       let filename = `indent_usage_summary_report`;
+//       if (exportMonth) {
+//         const [year, month] = exportMonth.split('-');
+//         const monthName = new Date(parseInt(year), parseInt(month) - 1).toLocaleString('default', { month: 'long' });
+//         filename += `_${monthName}_${year}`;
+//       } else if (activeSearch.month) {
+//         const [year, month] = activeSearch.month.split('-');
+//         const monthName = new Date(parseInt(year), parseInt(month) - 1).toLocaleString('default', { month: 'long' });
+//         filename += `_${monthName}_${year}`;
+//       } else {
+//         filename += `_${new Date().toISOString().split('T')[0]}`;
+//       }
+//       filename += '.csv';
+  
+//       const csvContent = [
+//         headers.join(','),
+//         ...csvData.map(row => 
+//           row.map(field => {
+//             if(field === 0){
+//               return '"0"';
+//             } 
+//             const stringField = String(field || '');
+//             return `"${stringField.replace(/"/g, '""')}"`;
+//           }).join(',')
+//         )
+//       ].join('\n');
+  
+//       const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+//       const link = document.createElement('a');
+//       const downloadUrl = URL.createObjectURL(blob);
+      
+//       link.setAttribute('href', downloadUrl);
+//       link.setAttribute('download', filename);
+//       link.style.visibility = 'hidden';
+      
+//       document.body.appendChild(link);
+//       link.click();
+//       document.body.removeChild(link);
+//       URL.revokeObjectURL(downloadUrl);
+      
+//       showSuccess('Export completed successfully!');
+//       setExportModalVisible(false);
+//       setExportMonth('');
+    
+//     } catch (error) {
+//       console.error('Error generating export:', error);
+//       showError('Error generating export file');
+//     } finally {
+//       setExportLoading(false);
+//     }
+//   };
+
+//   const getFormattedDateRange = () => {
+//     if (activeSearch.month) {
+//       const [year, month] = activeSearch.month.split('-');
+//       const monthName = new Date(parseInt(year), parseInt(month) - 1).toLocaleString('default', { month: 'long' });
+//       return `${monthName}-${year}`;
+//     }
+//     const now = new Date();
+//     const currentMonth = now.toLocaleString('default', { month: 'long' });
+//     const currentYear = now.getFullYear();
+//     return `${currentMonth}-${currentYear}`;
+//   };
+
+//   const filteredData = data.filter(item => {
+//     if (isSearchActive()) {
+//       return true;
+//     }
+//     return Object.values(item).some(value => {
+//       if (typeof value === 'object' && value !== null) {
+//         return Object.values(value).some(nestedValue => 
+//           nestedValue && nestedValue.toString().toLowerCase().includes(searchTerm.toLowerCase())
+//         );
+//       }
+//       return value && value.toString().toLowerCase().includes(searchTerm.toLowerCase());
+//     });
+//   });
+
+//   const totals = calculateTotals();
+
+//   if (loading) {
+//     return (
+//       <div className="d-flex justify-content-center align-items-center" style={{ height: '50vh' }}>
+//         <CSpinner color="primary" />
+//       </div>
+//     );
+//   }
+
+//   const handleUsageClick = (item) => {
+//     if (item.usage > 0) {
+//       navigate('/usage-detail', {
+//         state: {
+//           productId: item.productId || '',
+//           centerId: item.center?.id || '',
+//           productName: item.productName || '',
+//           centerName: item.center?.name || '',
+//           month: activeSearch.month || ''
+//         }
+//       });
+//     }
+//   };
+  
+//   const handleTransferReceiveClick = (item) => {
+//     if (item.transferReceive > 0) {
+//       const centerId = item.center?.id || '';
+//       const productId = item.productId || '';
+      
+//       if (!centerId || !productId) {
+//         console.error('Missing center or product ID:', { centerId, productId });
+//         return;
+//       }
+      
+//       const params = new URLSearchParams({
+//         product: productId,
+//         center: centerId,
+//         transferType: 'receive'
+//       });
+//       navigate(`/transfer-detail?${params.toString()}`);
+//     }
+//   };
+
+//   const handleTransferGivenClick = (item) => {
+//     if (item.transferGiven > 0) {
+//       const centerId = item.center?.id || '';
+//       const productId = item.productId || '';
+      
+//       if (!centerId || !productId) {
+//         console.error('Missing center or product ID:', { centerId, productId });
+//         return;
+//       }
+      
+//       const params = new URLSearchParams({
+//         product: productId,
+//         center: centerId,
+//         transferType: 'given'
+//       });
+//       navigate(`/transfer-detail?${params.toString()}`);
+//     }
+//   };
+  
+//   const handleFieldClick = (item, field, type) => {
+//     const value = item[field] || 0;
+//     if (value > 0) {
+//       const centerId = item.center?.id || '';
+//       const productId = item.productId || '';
+      
+//       if (!centerId || !productId) {
+//         console.error('Missing center or product ID:', { centerId, productId });
+//         return;
+//       }
+      
+//       const params = new URLSearchParams({
+//         product: productId,
+//         center: centerId,
+//         usageType: type,
+//         productName: encodeURIComponent(item.productName || ''),
+//         centerName: encodeURIComponent(item.center?.name || ''),
+//         month: activeSearch.month || ''
+//       });
+//       navigate(`/transaction-report?${params.toString()}`);
+//     }
+//   };
+
+//   const handleNcClick = (item) => handleFieldClick(item, 'nc', 'Customer');
+//   const handleConvertClick = (item) => handleFieldClick(item, 'convert', 'Customer');
+//   const handleShiftingClick = (item) => handleFieldClick(item, 'shifting', 'Customer');
+//   const handleBuildingUsageClick = (item) => handleFieldClick(item, 'buildingUsage', 'Building');
+//   const handleBuildingDamageClick = (item) => handleFieldClick(item, 'buildingDamage', 'building');
+//   const handleOtherClick = (item) => handleFieldClick(item, 'other', 'other');
+//   const handleDamageClick = (item) => handleFieldClick(item, 'damage', 'Damage');
+//   const handleRepairClick = (item) => handleFieldClick(item, 'repair', 'Customer');
+//   const handleReturnClick = (item) => handleFieldClick(item, 'return', 'Customer');
+
+//   const handlePurchaseClick = (item) => {
+//     if (item.purchase > 0) {
+//       const centerId = item.center?.id || '';
+//       const productId = item.productId || '';
+      
+//       if (!centerId || !productId) {
+//         console.error('Missing center or product ID:', { centerId, productId });
+//         return;
+//       }
+      
+//       const params = new URLSearchParams({
+//         product: productId,
+//         center: centerId,
+//         productName: encodeURIComponent(item.productName || ''),
+//         centerName: encodeURIComponent(item.center?.name || ''),
+//         month: activeSearch.month || '',
+//         transactionType: 'purchase'
+//       });
+      
+//       navigate(`/indent-detail?${params.toString()}`);
+//     }
+//   };
+
+//   if (error) {
+//     return <div className="alert alert-danger">{error}</div>;
+//   }
+
+//   return (
+//     <div>
+//       <div className='title'>Indent / Usage Summary Report </div>
+//       <IndentUsageSummarySearch
+//         visible={searchModalVisible}
+//         onClose={() => setSearchModalVisible(false)}
+//         onSearch={handleSearch}
+//         centers={centers}
+//         products={products}
+//       />
+
+//       {/* Export Modal */}
+//       <CModal visible={exportModalVisible} onClose={() => setExportModalVisible(false)} size="md">
+//         <CModalHeader>
+//           <CModalTitle>Export Indent / Usage Summary Report</CModalTitle>
+//         </CModalHeader>
+        
+//         <CModalBody>
+//           <div className="form-group mb-3">
+//             <CFormLabel htmlFor="exportMonth">Select Month (Optional)</CFormLabel>
+//             <CFormInput
+//               type="month"
+//               id="exportMonth"
+//               value={exportMonth}
+//               onChange={(e) => setExportMonth(e.target.value)}
+//               placeholder="Select month"
+//             />
+//             <small className="text-muted">Leave empty to use current month or active search month</small>
+//           </div>
+
+//           {/* Show current filters summary */}
+//           {(activeSearch.center || activeSearch.product) && (
+//             <div className="mt-3 p-2 bg-light rounded">
+//               <strong>Current Filters:</strong>
+//               <ul className="mb-0 mt-1">
+//                 {activeSearch.center && (
+//                   <li><small>Center: {centers.find(c => c._id === activeSearch.center)?.centerName}</small></li>
+//                 )}
+//                 {activeSearch.product && (
+//                   <li><small>Product: {products.find(p => p._id === activeSearch.product)?.productTitle}</small></li>
+//                 )}
+//                 {activeSearch.month && (
+//                   <li><small>Month: {getFormattedDateRange()}</small></li>
+//                 )}
+//               </ul>
+//             </div>
+//           )}
+//         </CModalBody>
+        
+//         <CModalFooter>
+//           <CButton color="secondary" onClick={() => setExportModalVisible(false)}>
+//             Cancel
+//           </CButton>
+//           <CButton color="primary" onClick={generateDetailExport} disabled={exportLoading}>
+//             {exportLoading ? (
+//               <>
+//                 <CSpinner size="sm" className="me-1" />
+//                 Exporting...
+//               </>
+//             ) : (
+//               <>
+//                 <i className="fa fa-fw fa-file-excel me-1"></i>
+//                 Export
+//               </>
+//             )}
+//           </CButton>
+//         </CModalFooter>
+//       </CModal>
+
+//       <CCard className='table-container mt-4'>
+//         <CCardHeader className='card-header d-flex justify-content-between align-items-center'>
+//           <div>
+//             <CButton 
+//               size="sm" 
+//               className="action-btn me-1" 
+//               onClick={() => setSearchModalVisible(true)}
+//             >
+//               <CIcon icon={cilSearch} className='icon' /> Search
+//             </CButton>
+//             {isSearchActive() && (
+//               <CButton 
+//                 size="sm" 
+//                 color="secondary" 
+//                 className="action-btn me-1" 
+//                 onClick={handleResetSearch}
+//               >
+//                 <CIcon icon={cilZoomOut} className='icon' /> Reset Search
+//               </CButton>
+//             )}
+//             <CButton 
+//               size="sm" 
+//               className="action-btn me-1"
+//               onClick={openExportModal}
+//               disabled={exportLoading || data.length === 0}
+//             >
+//               <i className="fa fa-fw fa-file-excel"></i>
+//               Export
+//             </CButton>
+//           </div>
+//           <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+//         </CCardHeader>
+
+//         <CCardBody>
+//           <div className="d-flex justify-content-between mb-3">
+//             <div>
+//               {exportMonth && (
+//                 <div className="text-muted small">
+//                   Export Month: {exportMonth}
+//                 </div>
+//               )}
+//             </div>
+//             <div className='d-flex'>
+//               <CFormLabelPro className='mt-1 m-1'>Search:</CFormLabelPro>
+//               <CFormInput
+//                 type="text"
+//                 style={{maxWidth: '350px', height: '30px', borderRadius: '0'}}
+//                 className="d-inline-block square-search"
+//                 value={searchTerm}
+//                 onChange={(e) => setSearchTerm(e.target.value)}
+//               />
+//             </div>
+//           </div>
+
+//           <div className='summary-report'>
+//             <h4 className='summary-title'>Showing Result</h4>
+//             <ul className='summary-list'>
+//               <li><strong>Date:</strong>{getFormattedDateRange()}</li>
+//               {filters?.center && (
+//                 <li><strong>Branch:</strong> {filters.center.name}</li>
+//               )}
+//             </ul>
+//           </div>
+
+//           <div className="responsive-table-wrapper">
+//             <CTable striped bordered hover className='responsive-table'>
+//               <CTableHead>
+//                 <CTableRow>
+//                   <CTableHeaderCell onClick={() => handleSort('center.name')} className="sortable-header">
+//                     Branch {getSortIcon('center.name')}
+//                   </CTableHeaderCell>
+//                   <CTableHeaderCell onClick={() => handleSort('productName')} className="sortable-header">
+//                     Product {getSortIcon('productName')}
+//                   </CTableHeaderCell>
+//                   <CTableHeaderCell onClick={() => handleSort('opening')} className="sortable-header">
+//                     Opening {getSortIcon('opening')}
+//                   </CTableHeaderCell>
+//                   <CTableHeaderCell onClick={() => handleSort('purchase')} className="sortable-header">
+//                     Purchase {getSortIcon('purchase')}
+//                   </CTableHeaderCell>
+//                   <CTableHeaderCell onClick={() => handleSort('transferReceive')} className="sortable-header">
+//                     Transfer Received {getSortIcon('transferReceive')}
+//                   </CTableHeaderCell>
+//                   <CTableHeaderCell onClick={() => handleSort('return')} className="sortable-header">
+//                     Return {getSortIcon('return')}
+//                   </CTableHeaderCell>
+//                   <CTableHeaderCell onClick={() => handleSort('usage')} className="sortable-header">
+//                     Usage {getSortIcon('usage')}
+//                   </CTableHeaderCell>
+//                   <CTableHeaderCell onClick={() => handleSort('transferGiven')} className="sortable-header">
+//                     Transfer Given {getSortIcon('transferGiven')}
+//                   </CTableHeaderCell>
+//                   <CTableHeaderCell onClick={() => handleSort('nc')} className="sortable-header">
+//                     NC {getSortIcon('nc')}
+//                   </CTableHeaderCell>
+//                   <CTableHeaderCell onClick={() => handleSort('convert')} className="sortable-header">
+//                     Convert {getSortIcon('convert')}
+//                   </CTableHeaderCell>
+//                   <CTableHeaderCell onClick={() => handleSort('shifting')} className="sortable-header">
+//                     Shifting {getSortIcon('shifting')}
+//                   </CTableHeaderCell>
+//                   <CTableHeaderCell onClick={() => handleSort('buildingUsage')} className="sortable-header">
+//                     Building new usage {getSortIcon('buildingUsage')}
+//                   </CTableHeaderCell>
+//                   <CTableHeaderCell onClick={() => handleSort('buildingDamage')} className="sortable-header">
+//                     Building Damage {getSortIcon('buildingDamage')}
+//                   </CTableHeaderCell>
+//                   <CTableHeaderCell onClick={() => handleSort('other')} className="sortable-header">
+//                     Other {getSortIcon('other')}
+//                   </CTableHeaderCell>
+//                   <CTableHeaderCell onClick={() => handleSort('repair')} className="sortable-header">
+//                     Repair {getSortIcon('repair')}
+//                   </CTableHeaderCell>
+//                   <CTableHeaderCell onClick={() => handleSort('damage')} className="sortable-header">
+//                     Damage {getSortIcon('damage')}
+//                   </CTableHeaderCell>
+//                   <CTableHeaderCell onClick={() => handleSort('closing')} className="sortable-header">
+//                     Closing {getSortIcon('closing')}
+//                   </CTableHeaderCell>
+//                 </CTableRow>
+//               </CTableHead>
+//               <CTableBody>
+//                 {filteredData.length > 0 ? (
+//                   <>
+//                     {filteredData.map((item, idx) => (
+//                       <CTableRow key={idx}>
+//                         <CTableDataCell>{item.center?.name || 'N/A'}</CTableDataCell>
+//                         <CTableDataCell>{item.productName || 'N/A'}</CTableDataCell>
+//                         <CTableDataCell>{item.opening || 0}</CTableDataCell>
+//                         <CTableDataCell>
+//                           <button 
+//                             className="btn btn-link p-0 text-decoration-none"
+//                             onClick={() => handlePurchaseClick(item)}
+//                             style={{
+//                               border: 'none', 
+//                               background: 'none', 
+//                               cursor: item.purchase > 0 ? 'pointer' : 'default',
+//                               color: item.purchase > 0 ? '#337ab7' : 'inherit'
+//                             }}
+//                             disabled={item.purchase === 0}
+//                           >
+//                             {item.purchase || 0}
+//                           </button>
+//                         </CTableDataCell>
+//                         <CTableDataCell>
+//                           <button 
+//                             className="btn btn-link p-0 text-decoration-none"
+//                             onClick={() => handleTransferReceiveClick(item)}
+//                             style={{border: 'none', background: 'none', cursor: 'pointer',color:'#337ab7'}}
+//                           >
+//                             {item.transferReceive || 0}
+//                           </button>
+//                         </CTableDataCell>
+//                         <CTableDataCell>
+//                           <button 
+//                             className="btn btn-link p-0 text-decoration-none"
+//                             onClick={() => handleReturnClick(item)}
+//                             style={{border: 'none', background: 'none', cursor: 'pointer',color:'#337ab7'}}
+//                           >
+//                             {item.return || 0}
+//                           </button>
+//                         </CTableDataCell>
+//                         <CTableDataCell>
+//                           <button 
+//                             className="btn btn-link p-0 text-decoration-none"
+//                             onClick={() => handleUsageClick(item)}
+//                             style={{border: 'none', background: 'none', cursor: 'pointer',color:'#337ab7'}}
+//                           >
+//                             {item.usage || 0}
+//                           </button>
+//                         </CTableDataCell>
+//                         <CTableDataCell>
+//                           <button 
+//                             className="btn btn-link p-0 text-decoration-none"
+//                             onClick={() => handleTransferGivenClick(item)}
+//                             style={{border: 'none', background: 'none', cursor: 'pointer',color:'#337ab7'}}
+//                           >
+//                             {item.transferGiven || 0}
+//                           </button>
+//                         </CTableDataCell>
+//                         <CTableDataCell>
+//                           <button 
+//                             className="btn btn-link p-0 text-decoration-none"
+//                             onClick={() => handleNcClick(item)}
+//                             style={{border: 'none', background: 'none', cursor: 'pointer',color:'#337ab7'}}
+//                           >
+//                             {item.nc || 0}
+//                           </button>
+//                         </CTableDataCell>
+//                         <CTableDataCell>
+//                           <button 
+//                             className="btn btn-link p-0 text-decoration-none"
+//                             onClick={() => handleConvertClick(item)}
+//                             style={{border: 'none', background: 'none', cursor: 'pointer',color:'#337ab7'}}
+//                           >
+//                             {item.convert || 0}
+//                           </button>
+//                         </CTableDataCell>
+//                         <CTableDataCell>
+//                           <button 
+//                             className="btn btn-link p-0 text-decoration-none"
+//                             onClick={() => handleShiftingClick(item)}
+//                             style={{border: 'none', background: 'none', cursor: 'pointer',color:'#337ab7'}}
+//                           >
+//                             {item.shifting || 0}
+//                           </button>
+//                         </CTableDataCell>
+//                         <CTableDataCell>
+//                           <button 
+//                             className="btn btn-link p-0 text-decoration-none"
+//                             onClick={() => handleBuildingUsageClick(item)}
+//                             style={{border: 'none', background: 'none', cursor: 'pointer',color:'#337ab7'}}
+//                           >
+//                             {item.buildingUsage || 0}
+//                           </button>
+//                         </CTableDataCell>
+//                         <CTableDataCell>
+//                           <button 
+//                             className="btn btn-link p-0 text-decoration-none"
+//                             onClick={() => handleBuildingDamageClick(item)}
+//                             style={{border: 'none', background: 'none', cursor: 'pointer',color:'#337ab7'}}
+//                           >
+//                             {item.buildingDamage || 0}
+//                           </button>
+//                         </CTableDataCell>
+//                         <CTableDataCell>
+//                           <button 
+//                             className="btn btn-link p-0 text-decoration-none"
+//                             onClick={() => handleOtherClick(item)}
+//                             style={{border: 'none', background: 'none', cursor: 'pointer',color:'#337ab7'}}
+//                           >
+//                             {item.other || 0}
+//                           </button>
+//                         </CTableDataCell>
+//                         <CTableDataCell>
+//                           <button 
+//                             className="btn btn-link p-0 text-decoration-none"
+//                             onClick={() => handleRepairClick(item)}
+//                             style={{border: 'none', background: 'none', cursor: 'pointer',color:'#337ab7'}}
+//                           >
+//                             {item.repair || 0}
+//                           </button>
+//                         </CTableDataCell>
+//                         <CTableDataCell>
+//                           <button 
+//                             className="btn btn-link p-0 text-decoration-none"
+//                             onClick={() => handleDamageClick(item)}
+//                             style={{border: 'none', background: 'none', cursor: 'pointer',color:'#337ab7'}}
+//                           >
+//                             {item.damage || 0}
+//                           </button>
+//                         </CTableDataCell>
+//                         <CTableDataCell>{item.closing || 0}</CTableDataCell>
+//                       </CTableRow>
+//                     ))}
+//                     <CTableRow className='total-row'>
+//                       <CTableDataCell colSpan="2"><strong>Total</strong></CTableDataCell>
+//                       <CTableDataCell><strong>{totals.opening}</strong></CTableDataCell>
+//                       <CTableDataCell><strong>{totals.purchase}</strong></CTableDataCell>
+//                       <CTableDataCell><strong>{totals.transferReceive}</strong></CTableDataCell>
+//                       <CTableDataCell><strong>{totals.return}</strong></CTableDataCell>
+//                       <CTableDataCell><strong>{totals.usage}</strong></CTableDataCell>
+//                       <CTableDataCell><strong>{totals.transferGiven}</strong></CTableDataCell>
+//                       <CTableDataCell><strong>{totals.nc}</strong></CTableDataCell>
+//                       <CTableDataCell><strong>{totals.convert}</strong></CTableDataCell>
+//                       <CTableDataCell><strong>{totals.shifting}</strong></CTableDataCell>
+//                       <CTableDataCell><strong>{totals.buildingUsage}</strong></CTableDataCell>
+//                       <CTableDataCell><strong>{totals.buildingDamage}</strong></CTableDataCell>
+//                       <CTableDataCell><strong>{totals.other}</strong></CTableDataCell>
+//                       <CTableDataCell><strong>{totals.repair}</strong></CTableDataCell>
+//                       <CTableDataCell><strong>{totals.damage}</strong></CTableDataCell>
+//                       <CTableDataCell><strong>{totals.closing}</strong></CTableDataCell>
+//                     </CTableRow>
+//                   </>
+//                 ) : (
+//                   <CTableRow>
+//                     <CTableDataCell colSpan="18" className="text-center">No data found</CTableDataCell>
+//                   </CTableRow>
+//                 )}
+//               </CTableBody>
+//             </CTable>
+//           </div>
+//         </CCardBody>
+//       </CCard>
+//     </div>
+//   );
+// };
+
+// export default IndentUsageSummary;
+
 import '../../css/table.css';
 import '../../css/form.css';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   CTable,
   CTableHead,
@@ -1627,7 +2545,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 const IndentUsageSummary = () => {
   const [data, setData] = useState([]);
-  const [summary, setSummary] = useState(null);
+  // Removed unused summary state
   const [filters, setFilters] = useState(null);
   const [centers, setCenters] = useState([]);
   const [products, setProducts] = useState([]);
@@ -1646,95 +2564,75 @@ const IndentUsageSummary = () => {
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  
   const location = useLocation();
   const navigate = useNavigate();
 
-  useEffect(() => {
-  if (location.state?.productFilter) {
-    const productFilter = location.state.productFilter;
-    const centerFilter = location.state.centerFilter || '';
-    
-    console.log('📦 Received product filter from navigation:', {
-      productFilter,
-      centerFilter
-    });
-    
-    // Set active search with product and center filters
-    const searchParams = {
-      center: centerFilter,
-      product: productFilter,
-      month: activeSearch.month || '',
-    };
-    
-    setActiveSearch(searchParams);
-    fetchData(searchParams, 1);
-  }
-}, [location.state]);
-  
-  const fetchData = async (searchParams = {}, page = 1) => {
-  try {
-    setLoading(true);
-    setError(null);
+  // Fetch data function - wrapped in useCallback to prevent unnecessary re-renders
+  const fetchData = useCallback(async (searchParams = {}, page = 1) => {
+    try {
+      setLoading(true);
+      setError(null);
 
-    const params = new URLSearchParams();
+      const params = new URLSearchParams();
+        
+      if (searchParams.center) {
+        params.append('centerId', searchParams.center);
+      }
+
+      if (searchParams.product) {
+        params.append('productId', searchParams.product);
+      }
+
+      if (searchParams.reseller) {
+        params.append('resellerId', searchParams.reseller);
+      }
+
+      if (searchParams.startDate) {
+        params.append('startDate', searchParams.startDate);
+      }
+
+      if (searchParams.endDate) {
+        params.append('endDate', searchParams.endDate);
+      }
+
+      // Handle month filter - check both searchParams and activeSearch
+      const monthValue = searchParams.month || activeSearch.month;
+      if (monthValue) {
+        const [year, month] = monthValue.split('-');
+        params.append('month', month);
+        params.append('year', year);
+      }
       
-    if (searchParams.center) {
-      params.append('centerId', searchParams.center);
+      params.append('page', page);
+
+      const url = params.toString()
+        ? `/reports/indent-usage-summary?${params.toString()}`
+        : '/reports/indent-usage-summary';
+
+      console.log('Fetching Usage Summary URL:', url);
+
+      const response = await axiosInstance.get(url);
+
+      if (response.data.success) {
+        setData(response.data.data || []);
+        setFilters(response.data.filters || null);
+        setCurrentPage(response.data.pagination?.currentPage || 1);
+        setTotalPages(response.data.pagination?.totalPages || 1);
+      } else {
+        const errorMessage = response.data.message || 'API returned unsuccessful response';
+        setError(errorMessage);
+        console.error('Backend error:', response.data);
+      }
+    } catch (err) {
+      setError(err.message);
+      console.error('Error fetching data:', err);
+    } finally {
+      setLoading(false);
     }
+  }, [activeSearch.month]);
 
-    if (searchParams.product) {
-      params.append('productId', searchParams.product);
-    }
-
-    if (searchParams.reseller) {
-      params.append('resellerId', searchParams.reseller);
-    }
-
-    if (searchParams.startDate) {
-      params.append('startDate', searchParams.startDate);
-    }
-
-    if (searchParams.endDate) {
-      params.append('endDate', searchParams.endDate);
-    }
-
-    if (searchParams.month) {
-      const [year, month] = searchParams.month.split('-');
-      params.append('month', month);
-      params.append('year', year);
-    }
-    params.append('page', page);
-
-    const url = params.toString()
-      ? `/reports/indent-usage-summary?${params.toString()}`
-      : '/reports/indent-usage-summary';
-
-    console.log('Fetching Usage Summary URL:', url);
-
-    const response = await axiosInstance.get(url);
-
-    if (response.data.success) {
-      setData(response.data.data || []);
-      setSummary(response.data.summary || null);
-      setFilters(response.data.filters || null);
-      setCurrentPage(response.data.pagination?.currentPage || 1);
-      setTotalPages(response.data.pagination?.totalPages || 1);
-    } else {
-      const errorMessage =
-        response.data.message || 'API returned unsuccessful response';
-
-      setError(errorMessage);
-      console.error('Backend error:', response.data);
-    }
-  } catch (err) {
-    setError(err.message);
-    console.error('Error fetching data:', err);
-  } finally {
-    setLoading(false);
-  }
-};
-
-  const fetchCenters = async () => {
+  const fetchCenters = useCallback(async () => {
     try {
       const response = await axiosInstance.get('/centers');
       if (response.data.success) {
@@ -1743,9 +2641,9 @@ const IndentUsageSummary = () => {
     } catch (error) {
       console.error('Error fetching centers:', error);
     }
-  };
+  }, []);
 
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
       const response = await axiosInstance.get('/products/all');
       if (response.data.success) {
@@ -1754,13 +2652,62 @@ const IndentUsageSummary = () => {
     } catch (error) {
       console.error('Error fetching products:', error);
     }
-  };
-
-  useEffect(() => {
-    fetchData();
-    fetchCenters();
-    fetchProducts();
   }, []);
+
+  // Handle navigation state for product filter
+  useEffect(() => {
+    if (location.state?.productFilter) {
+      const productFilter = location.state.productFilter;
+      const centerFilter = location.state.centerFilter || '';
+      
+      console.log('📦 Received product filter from navigation:', {
+        productFilter,
+        centerFilter
+      });
+      
+      const searchParams = {
+        center: centerFilter,
+        product: productFilter,
+        month: activeSearch.month || '',
+      };
+      
+      setActiveSearch(searchParams);
+      fetchData(searchParams, 1);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.state]);
+
+  // Initial data fetch
+  useEffect(() => {
+    const loadInitialData = async () => {
+      try {
+        setLoading(true);
+        await Promise.all([fetchCenters(), fetchProducts()]);
+        
+        // Only fetch data if not already fetched from navigation
+        if (!location.state?.productFilter) {
+          await fetchData({}, 1);
+        }
+      } catch (err) {
+        console.error('Error loading initial data:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadInitialData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Fetch data when activeSearch changes (except for initial load)
+  useEffect(() => {
+    // Skip if this is the initial load or navigation load
+    if (!loading && !location.state?.productFilter) {
+      fetchData(activeSearch, 1);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeSearch.center, activeSearch.product, activeSearch.month]);
 
   const handlePageChange = (page) => {
     if (page < 1 || page > totalPages) return;
@@ -1772,7 +2719,7 @@ const IndentUsageSummary = () => {
       opening: 0,
       purchase: 0,
       transferReceive: 0,
-      return:0,
+      return: 0,
       usage: 0,
       transferGiven: 0,
       nc: 0,
@@ -1833,28 +2780,28 @@ const IndentUsageSummary = () => {
     ) : null;
 
   const handleSearch = (searchData) => {
-  const mergedSearchData = {
-    ...activeSearch,
-    ...searchData
+    const mergedSearchData = {
+      ...activeSearch,
+      ...searchData
+    };
+    setActiveSearch(mergedSearchData);
+    // Clear location state when doing a new search
+    navigate(location.pathname, { replace: true, state: {} });
+    fetchData(mergedSearchData, 1);
   };
-  setActiveSearch(mergedSearchData);
-  // ✅ Clear location state when doing a new search
-  navigate(location.pathname, { replace: true, state: {} });
-  fetchData(mergedSearchData, 1);
-};
 
   const handleResetSearch = () => {
-  const emptySearch = { 
-    center: '', 
-    product: '', 
-    month: '',
+    const emptySearch = { 
+      center: '', 
+      product: '', 
+      month: '',
+    };
+    setActiveSearch(emptySearch);
+    setSearchTerm('');
+    // Clear location state to prevent re-triggering
+    navigate(location.pathname, { replace: true, state: {} });
+    fetchData(emptySearch, 1);
   };
-  setActiveSearch(emptySearch);
-  setSearchTerm('');
-  // ✅ Clear location state to prevent re-triggering
-  navigate(location.pathname, { replace: true, state: {} });
-  fetchData(emptySearch, 1);
-};
 
   const isSearchActive = () => {
     return activeSearch.center || 
@@ -2257,10 +3204,94 @@ const IndentUsageSummary = () => {
         <CCardBody>
           <div className="d-flex justify-content-between mb-3">
             <div>
-              {exportMonth && (
-                <div className="text-muted small">
-                  Export Month: {exportMonth}
-                </div>
+              {/* Display active filter chips */}
+              {activeSearch.product && (
+                <span className="filter-chip me-2" style={{
+                  display: 'inline-block',
+                  background: '#e9ecef',
+                  padding: '4px 12px',
+                  borderRadius: '20px',
+                  fontSize: '13px',
+                  marginBottom: '8px'
+                }}>
+                  Product: {products.find(p => p._id === activeSearch.product)?.productTitle || activeSearch.product}
+                  <button
+                    onClick={() => {
+                      const newSearch = { ...activeSearch, product: '' };
+                      setActiveSearch(newSearch);
+                      // Clear location state
+                      navigate(location.pathname, { replace: true, state: {} });
+                      fetchData(newSearch, 1);
+                    }}
+                    style={{
+                      border: 'none',
+                      background: 'transparent',
+                      marginLeft: '8px',
+                      cursor: 'pointer',
+                      color: '#dc3545'
+                    }}
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+              {activeSearch.center && (
+                <span className="filter-chip me-2" style={{
+                  display: 'inline-block',
+                  background: '#e9ecef',
+                  padding: '4px 12px',
+                  borderRadius: '20px',
+                  fontSize: '13px',
+                  marginBottom: '8px'
+                }}>
+                  Center: {centers.find(c => c._id === activeSearch.center)?.centerName || activeSearch.center}
+                  <button
+                    onClick={() => {
+                      const newSearch = { ...activeSearch, center: '' };
+                      setActiveSearch(newSearch);
+                      navigate(location.pathname, { replace: true, state: {} });
+                      fetchData(newSearch, 1);
+                    }}
+                    style={{
+                      border: 'none',
+                      background: 'transparent',
+                      marginLeft: '8px',
+                      cursor: 'pointer',
+                      color: '#dc3545'
+                    }}
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+              {activeSearch.month && (
+                <span className="filter-chip me-2" style={{
+                  display: 'inline-block',
+                  background: '#e9ecef',
+                  padding: '4px 12px',
+                  borderRadius: '20px',
+                  fontSize: '13px',
+                  marginBottom: '8px'
+                }}>
+                  Month: {getFormattedDateRange()}
+                  <button
+                    onClick={() => {
+                      const newSearch = { ...activeSearch, month: '' };
+                      setActiveSearch(newSearch);
+                      navigate(location.pathname, { replace: true, state: {} });
+                      fetchData(newSearch, 1);
+                    }}
+                    style={{
+                      border: 'none',
+                      background: 'transparent',
+                      marginLeft: '8px',
+                      cursor: 'pointer',
+                      color: '#dc3545'
+                    }}
+                  >
+                    ×
+                  </button>
+                </span>
               )}
             </div>
             <div className='d-flex'>
