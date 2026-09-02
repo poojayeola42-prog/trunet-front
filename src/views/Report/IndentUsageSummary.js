@@ -1623,7 +1623,7 @@ import axiosInstance from 'src/axiosInstance';
 import Pagination from 'src/utils/Pagination';
 import { showError, showSuccess } from 'src/utils/sweetAlerts';
 import IndentUsageSummarySearch from './IndentUsageSummarySearch';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const IndentUsageSummary = () => {
   const [data, setData] = useState([]);
@@ -1646,7 +1646,30 @@ const IndentUsageSummary = () => {
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const location = useLocation();
   const navigate = useNavigate();
+
+  useEffect(() => {
+  if (location.state?.productFilter) {
+    const productFilter = location.state.productFilter;
+    const centerFilter = location.state.centerFilter || '';
+    
+    console.log('📦 Received product filter from navigation:', {
+      productFilter,
+      centerFilter
+    });
+    
+    // Set active search with product and center filters
+    const searchParams = {
+      center: centerFilter,
+      product: productFilter,
+      month: activeSearch.month || '',
+    };
+    
+    setActiveSearch(searchParams);
+    fetchData(searchParams, 1);
+  }
+}, [location.state]);
   
   const fetchData = async (searchParams = {}, page = 1) => {
   try {
@@ -1810,23 +1833,28 @@ const IndentUsageSummary = () => {
     ) : null;
 
   const handleSearch = (searchData) => {
-    const mergedSearchData = {
-      ...activeSearch,
-      ...searchData
-    };
-    setActiveSearch(mergedSearchData);
-    fetchData(mergedSearchData, 1);
+  const mergedSearchData = {
+    ...activeSearch,
+    ...searchData
   };
+  setActiveSearch(mergedSearchData);
+  // ✅ Clear location state when doing a new search
+  navigate(location.pathname, { replace: true, state: {} });
+  fetchData(mergedSearchData, 1);
+};
 
   const handleResetSearch = () => {
-    setActiveSearch({ 
-      center: '', 
-      product: '', 
-      month: '',
-    });
-    setSearchTerm('');
-    fetchData({}, 1);
+  const emptySearch = { 
+    center: '', 
+    product: '', 
+    month: '',
   };
+  setActiveSearch(emptySearch);
+  setSearchTerm('');
+  // ✅ Clear location state to prevent re-triggering
+  navigate(location.pathname, { replace: true, state: {} });
+  fetchData(emptySearch, 1);
+};
 
   const isSearchActive = () => {
     return activeSearch.center || 
